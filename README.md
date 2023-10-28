@@ -9,8 +9,6 @@ A random project I came up with that mimicks a bit of snake mechanics, but with 
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Running the Game](#running-the-game)
-- [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
@@ -39,3 +37,6 @@ Provide step-by-step instructions on how users can install any necessary depende
 ### Running the Game
 1. Navigate to the project directory.
 2. Open the executable main.py
+
+### License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE)
