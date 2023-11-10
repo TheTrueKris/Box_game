@@ -17,6 +17,10 @@ class MainMenu:
             50    # Set the height of the back button
         )
         
+        # Load the main menu background
+        self.background_original = pygame.image.load("assets/background.png").convert_alpha()
+        self.background = pygame.transform.scale(self.background_original, (self.screen.get_width(), self.screen.get_height()))
+        
         # Load arrow images
         self.arrow_left_original = pygame.image.load("assets/arrow_left.png").convert_alpha()
         self.arrow_right_original = pygame.image.load("assets/arrow_right.png").convert_alpha()
@@ -41,19 +45,19 @@ class MainMenu:
         )
 
     def render(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.background, (0,0))
 
         if not self.options_menu:
-            title = self.font.render("Main Menu", True, "white")
+            title = self.font.render("Main Menu", True, "black")
             self.screen.blit(title, (self.screen.get_width() // 2 - title.get_width() // 2, 100))
 
-            play_option = self.font.render("Play Game", True, "white")
+            play_option = self.font.render("Play Game", True, "black")
             self.screen.blit(play_option, (self.screen.get_width() // 2 - play_option.get_width() // 2, 200))
 
-            options_option = self.font.render("Options", True, "white")
+            options_option = self.font.render("Options", True, "black")
             self.screen.blit(options_option, (self.screen.get_width() // 2 - options_option.get_width() // 2, 250))
 
-            quit_option = self.font.render("Quit", True, "white")
+            quit_option = self.font.render("Quit", True, "black")
             self.screen.blit(quit_option, (self.screen.get_width() // 2 - quit_option.get_width() // 2, 300))
         else:
             self.render_options_menu()
@@ -61,17 +65,17 @@ class MainMenu:
         pygame.display.flip()
 
     def render_options_menu(self):
-        title = self.font.render("Options", True, "white")
+        title = self.font.render("Options", True, "black")
         self.screen.blit(title, (self.screen.get_width() // 2 - title.get_width() // 2, 100))
 
-        volume_label = self.font.render("Volume: {}".format(self.volume), True, "white")
+        volume_label = self.font.render("Volume: {}".format(self.volume), True, "black")
         self.screen.blit(volume_label, (self.screen.get_width() // 2 - volume_label.get_width() // 2, 200))
 
         # Render arrow graphics
         self.screen.blit(self.arrow_left, self.arrow_rect_left)
         self.screen.blit(self.arrow_right, self.arrow_rect_right)
 
-        back_option = self.font.render("Back", True, "white")
+        back_option = self.font.render("Back", True, "black")
         self.screen.blit(back_option, (self.screen.get_width() // 2 - back_option.get_width() // 2, 250))
 
     def handle_input(self):
