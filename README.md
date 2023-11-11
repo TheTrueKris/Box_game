@@ -16,8 +16,8 @@ Missing for now.
 
 ## Features
 - Player wrapping.
-- A barrier which deflect the ball.
-- Bouncing ball that tries to kill you.
+- A barrier which deflects the ball.
+- A bouncing ball that tries to kill you.
 - A score mechanic.
 
 ## Getting Started
