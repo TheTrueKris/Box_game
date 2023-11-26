@@ -42,9 +42,9 @@ class GameManager:
         self.in_main_menu = True
 
         # Initializes the food manager and sets the amount of food to 5
-        self.food_manager = Foods(width, height, food_amount=5)
+        self.food_manager = Foods(food_amount=5)
         # Spawns food
-        self.food_manager.spawn_food(eaten_food = [])
+        self.food_manager.spawn_food(self.screen, eaten_food = [])
 
         # Creates the player instance
         self.player = Player(width, height)
@@ -53,7 +53,7 @@ class GameManager:
         self.score_manager = ScoreManager(width, height)
         
         # Creates the ball instance
-        self.ball = Ball(width, height, self.player, self.handle_game_over)
+        self.ball = Ball(self.player, self.handle_game_over)
         
         # Create the barrier instance
         self.barrier = Barrier(width, height, self.player)
@@ -61,7 +61,7 @@ class GameManager:
     def handle_game_over(self):
         # Restart the game
         self.player.reset_player(self.screen.get_width(), self.screen.get_height())
-        self.ball.reset_ball()
+        self.ball.reset_ball(self.screen)
         self.score_manager.reset_score()
         self.food_count = 0
 
@@ -86,7 +86,7 @@ class GameManager:
         self.player.wrap_around(self.screen)
         
         # Update the ball
-        self.ball.move(self.dt)
+        self.ball.move(self.dt, self.screen)
 
         # Checks for collision between the player and food
         eaten_food = CollisionManager.check_collision(
@@ -97,7 +97,7 @@ class GameManager:
             self.sound_manager.stop_sound_effect("eat_sound")
             self.sound_manager.play_sound_effect("eat_sound")
             # Respawn only the missing food
-            self.food_manager.spawn_food(eaten_food)
+            self.food_manager.spawn_food(self.screen, eaten_food)
             # Increment food count and update the score
             self.food_count += 1
             self.score_manager.increase_score(self.food_count)
