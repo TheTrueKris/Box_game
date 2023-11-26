@@ -64,6 +64,9 @@ class GameManager:
         self.ball.reset_ball(self.screen)
         self.score_manager.reset_score()
         self.food_count = 0
+        self.food_manager.reset_food()
+        self.food_manager.spawn_food(self.screen, eaten_food = [])
+        
 
     def handle_events(self):
         for event in pygame.event.get():

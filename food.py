@@ -23,3 +23,7 @@ class Foods():
     def render_food(self, screen):
         for food_rect in self.foods_list:
             pygame.draw.rect(screen, "white", food_rect)
+            
+    
+    def reset_food(self):
+        self.foods_list = []
