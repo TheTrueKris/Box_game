@@ -43,7 +43,7 @@ class GameManager:
         self.in_main_menu = True
 
         # Initializes the food manager and sets the amount of food to 5
-        self.food_manager = Foods(food_amount=5)
+        self.food_manager = Foods(width, height, food_amount=5)
         # Spawns food
         self.food_manager.spawn_food(eaten_food = [])
 
@@ -51,7 +51,7 @@ class GameManager:
         self.player = Player(width, height)
         
         # Creates an instance of the score
-        self.score_manager = ScoreManager(width,height)
+        self.score_manager = ScoreManager(width, height)
         
         # Creates the ball instance
         self.ball = Ball(width, height, self.player, self.handle_game_over)
@@ -121,7 +121,7 @@ class GameManager:
         self.screen.fill("black")
         
         # Renders the food
-        self.food_manager.render_food()
+        self.food_manager.render_food(self.screen)
         
         # Draw the player
         self.player.draw(self.screen)
