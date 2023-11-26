@@ -14,19 +14,17 @@ class Ball:
         self.reset_ball()
 
     def reset_ball(self):
-        self.x = random.randint(self.radius, self.screen_width - self.radius)
-        self.y = random.randint(self.radius, self.screen_height - self.radius)
+        self.x = random.randint(self.radius, self.screen_width - self.radius * 2)
+        self.y = random.randint(self.radius, self.screen_height - self.radius * 2)
         self.speed = 200  # Adjust the speed as needed
         self.direction = random.uniform(0, 2 * math.pi)  # Random initial direction
         self.last_collision_time = 0
         
-        self.speed = 150
-
-    def move(self, dt):
-        if time.time() - self.last_collision_time < 0.2:
+        if time.time() - self.last_collision_time < 0.15:
             # Player has invulnerability for 0.2 seconds
             return
 
+    def move(self, dt):
         # Update ball position based on direction and speed
         self.x += self.speed * dt * math.cos(self.direction)
         self.y += self.speed * dt * math.sin(self.direction)
