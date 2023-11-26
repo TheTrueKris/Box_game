@@ -24,7 +24,6 @@ class GameManager:
         self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
         self.screen_rect = self.screen.get_rect()
         self.screen_rect.topleft = (x, y)
-        self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.running = True
         self.dt = 0

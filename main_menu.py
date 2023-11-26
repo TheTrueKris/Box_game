@@ -150,8 +150,6 @@ class MainMenu:
         return True, None
 
     def handle_options_menu_input(self):
-        width, height = self.screen.get_width(), self.screen.get_height()  # Default values
-
         if self.is_mouse_over_rect(self.back_button_rect):  # Back button
             self.options_menu = False
         elif self.is_mouse_over_rect(self.arrow_rect_left):  # Adjust volume down
@@ -170,6 +168,7 @@ class MainMenu:
                 
                 # Set the new window size
                 pygame.display.set_mode(self.selected_window_size, pygame.RESIZABLE)
+                width, height = self.selected_window_size[0], self.selected_window_size[1]  # Default values
                 return self.selected_window_size, width, height
                 
     def is_mouse_over_rect(self, rect):
