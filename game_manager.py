@@ -11,7 +11,19 @@ from barrier import Barrier
 class GameManager:
     def __init__(self, width, height):
         pygame.init()
+        # Get the screen dimensions
+        screen_info = pygame.display.Info()
+        screen_width = screen_info.current_w
+        screen_height = screen_info.current_h
+
+        # Calculate the center position
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
         pygame.display.set_caption("A Box Game...")
+        self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+        self.screen_rect = self.screen.get_rect()
+        self.screen_rect.topleft = (x, y)
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.running = True
@@ -48,8 +60,6 @@ class GameManager:
         self.barrier = Barrier(width, height, self.player)
         
     def handle_game_over(self):
-        # Implement your game over logic here
-        print("Game Over!")
         # Restart the game
         self.player.reset_player(self.screen.get_width(), self.screen.get_height())
         self.ball.reset_ball()
@@ -101,7 +111,8 @@ class GameManager:
             
         # Updates the barrier
         self.barrier.dt = self.dt
-        self.barrier.update(self.ball)
+        if self.barrier.is_active:
+            self.barrier.update(self.ball)
             
         # Updates the display
         pygame.display.flip()
@@ -134,6 +145,8 @@ class GameManager:
                     self.in_main_menu = False
                     # Plays background music when entering the game
                     self.sound_manager.play_background_music()
+                    self.handle_game_over()
+                    
                 elif selected_option == "Quit":
                     pygame.quit()
                     return

@@ -5,13 +5,12 @@ class Barrier:
     def __init__(self, screen_width, screen_height, player):
         self.width = 10
         self.length = 60
-        self.color = "white"
         self.player = player
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.distance_from_player = 75  # Adjust the distance as needed
         self.is_active = False
-        self.barrier_image = pygame.image.load("assets/Barrier.png").convert_alpha
+        self.barrier_image = pygame.image.load("assets/Barrier.png")
         self.barrier_image = pygame.transform.scale(self.barrier_image, (self.width, self.length))
 
     def update(self, ball):
@@ -26,13 +25,16 @@ class Barrier:
         )
         self.x = player_center[0] + self.distance_from_player * math.cos(angle_to_mouse)
         self.y = player_center[1] + self.distance_from_player * math.sin(angle_to_mouse)
+        
+        # Update the rotation angle based on the mouse position
+        self.rotation_angle = math.degrees(angle_to_mouse)
 
         # Check for collision with the ball
         distance = math.sqrt((self.x - ball.x) ** 2 + (self.y - ball.y) ** 2)
-        if distance <= self.length / 2 + ball.radius:
+        if self.is_active and distance <= self.length / 2 + ball.radius:
             # Reflect the ball's angle
             self.reflect_ball(ball, angle_to_mouse + math.pi)
-
+            
     def reflect_ball(self, ball, incident_angle):
         # Calculate the normal vector of the barrier
         barrier_normal = pygame.Vector2(math.cos(incident_angle - math.pi / 2), math.sin(incident_angle - math.pi / 2))
@@ -45,8 +47,11 @@ class Barrier:
 
     def draw(self, screen):
         if self.is_active:
-            # Draw the barrier image onto the screen
-            screen.blit(self.barrier_image, (self.x - self.width / 2, self.y - self.length / 2))
+            # Rotate the barrier image
+            rotated_barrier = pygame.transform.rotate(self.barrier_image, -self.rotation_angle)
+            
+            # Draw the rotated barrier image onto the screen
+            screen.blit(rotated_barrier, (self.x - self.width / 2, self.y - self.length / 2))
 
     def activate(self):
         self.is_active = True
