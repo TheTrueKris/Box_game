@@ -28,9 +28,17 @@ class Ball:
 
         # Bounce back when the ball hits the screen edges
         if self.x - self.radius < 0 or self.x + self.radius > screen.get_width():
-            self.direction = math.pi - self.direction
+            self.direction = math.pi -self.direction
         if self.y - self.radius < 0 or self.y + self.radius > screen.get_height():
             self.direction = -self.direction
+            
+        # If ball is gone, teleport him back
+        if self.x - self.radius < -50 or self.x + self.radius > screen.get_width() + 50:
+            self.x = random.randint(self.radius * 2, screen.get_width() - self.radius * 2)
+            self.y = random.randint(self.radius * 2, screen.get_height() - self.radius * 2)
+        if self.y - self.radius < -50 or self.y + self.radius > screen.get_height() + 50:
+            self.x = random.randint(self.radius * 2, screen.get_width() - self.radius * 2)
+            self.y = random.randint(self.radius * 2, screen.get_height() - self.radius * 2)
 
         # Increase speed over time
         self.speed += 1  # You can adjust the speed increment as needed
