@@ -48,6 +48,7 @@ class MainMenu:
         # Additional attribute to store the selected window size
         self.selected_window_size = (screen.get_width(), screen.get_height())
         self.options_menu = False
+        self.window_size_changed = False
         self.volume = 50  # Placeholder for volume level
         self.back_button_rect = pygame.Rect(
             self.screen.get_width() // 2 - 75,  # Adjust the x-coordinate to center the button
@@ -191,3 +192,5 @@ class MainMenu:
                 return selected_option
 
             self.clock.tick(self.FPS)
+            
+    

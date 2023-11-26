@@ -23,6 +23,7 @@ class GameManager:
         pygame.display.set_caption("A Box Game...")
         self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
         self.screen_rect = self.screen.get_rect()
+        self.screencopy = None
         self.screen_rect.topleft = (x, y)
         self.clock = pygame.time.Clock()
         self.running = True
@@ -58,6 +59,9 @@ class GameManager:
         # Create the barrier instance
         self.barrier = Barrier(width, height, self.player)
         
+        # Starts the game
+        self.handle_game_over()
+        
     def handle_game_over(self):
         # Restart the game
         self.player.reset_player(self.screen.get_width(), self.screen.get_height())
@@ -75,12 +79,17 @@ class GameManager:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.in_main_menu = not self.in_main_menu
+                if event.key == pygame.K_SPACE:
+                    # Restarts the game
+                    self.handle_game_over()   
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     self.barrier.activate()
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:  # Left mouse button
                     self.barrier.deactivate()
+                
+                    
 
     def update(self):
         # Moves and wraps the player
@@ -142,12 +151,12 @@ class GameManager:
             self.handle_events()
             
             if self.in_main_menu:
+                    
                 selected_option = self.main_menu.run()
                 if selected_option == "Play Game":
                     self.in_main_menu = False
                     # Plays background music when entering the game
                     self.sound_manager.play_background_music()
-                    self.handle_game_over()
                     
                 elif selected_option == "Quit":
                     pygame.quit()
@@ -156,6 +165,11 @@ class GameManager:
             else:
                 self.update()
                 self.render()
+                
+                if self.screencopy != (self.screen.get_width(), self.screen.get_height()):
+                    self.screencopy = (self.screen.get_width(), self.screen.get_height())
+                    # Restarts the game
+                    self.handle_game_over() 
 
                 # Sets tick rate to 60
                 self.dt = self.clock.tick(self.FPS) / 1000
