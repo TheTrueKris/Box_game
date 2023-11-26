@@ -1,6 +1,43 @@
 import pygame
 import sys
 
+class WindowPicker:
+    def __init__(self, screen):
+        self.screen = screen
+        self.font = pygame.font.Font(None, 36)
+        self.sizes = [(800, 600), (960, 600), (1280, 720), (1920, 1080)]
+        self.selected_size = None
+
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    for idx, size in enumerate(self.sizes):
+                        button_rect = pygame.Rect(50, 50 + idx * 50, 300, 40)
+                        if button_rect.collidepoint(x, y):
+                            self.selected_size = size
+                            return
+
+            self.render()
+
+    def render(self):
+        self.screen.fill((255, 255, 255))
+
+        for idx, size in enumerate(self.sizes):
+            button_rect = pygame.Rect(50, 50 + idx * 50, 300, 40)
+            pygame.draw.rect(self.screen, (200, 200, 200), button_rect)
+            pygame.draw.rect(self.screen, (0, 0, 0), button_rect, 2)
+
+            text = self.font.render(f"{size[0]} x {size[1]}", True, (0, 0, 0))
+            self.screen.blit(text, (button_rect.centerx - text.get_width() // 2, button_rect.centery - text.get_height() // 2))
+
+        pygame.display.flip()
+
+
 class MainMenu:
     def __init__(self, screen, sound_manager):
         self.screen = screen
@@ -8,18 +45,21 @@ class MainMenu:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 36)
         self.FPS = 60
+        # Additional attribute to store the selected window size
+        self.selected_window_size = (screen.get_width(), screen.get_height())
         self.options_menu = False
         self.volume = 50  # Placeholder for volume level
         self.back_button_rect = pygame.Rect(
             self.screen.get_width() // 2 - 75,  # Adjust the x-coordinate to center the button
-            250,  # Set the y-coordinate for the back button
+            300,  # Set the y-coordinate for the back button
             150,  # Set the width of the back button
             50    # Set the height of the back button
         )
         
+        
         # Load the main menu background
         self.background_original = pygame.image.load("assets/background.png").convert_alpha()
-        self.background = pygame.transform.scale(self.background_original, (self.screen.get_width(), self.screen.get_height()))
+        
         
         # Load arrow images
         self.arrow_left_original = pygame.image.load("assets/arrow_left.png").convert_alpha()
@@ -43,9 +83,18 @@ class MainMenu:
             arrow_width,
             arrow_height
         )
+        
+        # Create an instance of WindowPicker
+        self.window_picker = WindowPicker(self.screen)
 
     def render(self):
+        # Update the background size based on the selected window size
+        self.background = pygame.transform.scale(self.background_original, self.selected_window_size)
         self.screen.blit(self.background, (0,0))
+        self.arrow_rect_left.x = self.screen.get_width() // 2 - 125
+        self.arrow_rect_right.x = self.screen.get_width() // 2 + 100
+        self.back_button_rect.x = self.screen.get_width() // 2 - 75
+        
 
         if not self.options_menu:
             title = self.font.render("Main Menu", True, "black")
@@ -74,9 +123,12 @@ class MainMenu:
         # Render arrow graphics
         self.screen.blit(self.arrow_left, self.arrow_rect_left)
         self.screen.blit(self.arrow_right, self.arrow_rect_right)
+        
+        window_size_option = self.font.render("Change Window Size", True, "black")
+        self.screen.blit(window_size_option, (self.screen.get_width() // 2 - window_size_option.get_width() // 2, 250))
 
         back_option = self.font.render("Back", True, "black")
-        self.screen.blit(back_option, (self.screen.get_width() // 2 - back_option.get_width() // 2, 250))
+        self.screen.blit(back_option, (self.screen.get_width() // 2 - back_option.get_width() // 2, 300))
 
     def handle_input(self):
         for event in pygame.event.get():
@@ -93,10 +145,13 @@ class MainMenu:
                         return False, "Quit"
                 else:
                     self.handle_options_menu_input()
+                    
 
         return True, None
 
     def handle_options_menu_input(self):
+        width, height = self.screen.get_width(), self.screen.get_height()  # Default values
+
         if self.is_mouse_over_rect(self.back_button_rect):  # Back button
             self.options_menu = False
         elif self.is_mouse_over_rect(self.arrow_rect_left):  # Adjust volume down
@@ -105,7 +160,18 @@ class MainMenu:
         elif self.is_mouse_over_rect(self.arrow_rect_right):  # Adjust volume up
             self.volume = min(100, self.volume + 5)
             self.sound_manager.set_volume(self.volume)
-
+        elif self.is_mouse_over(250, 300):  # Change Window Size button
+            self.window_picker.run()
+            selected_size = self.window_picker.selected_size
+            
+            if selected_size:
+                self.selected_window_size = selected_size
+                self.window_picker.selected_size = None
+                
+                # Set the new window size
+                pygame.display.set_mode(self.selected_window_size, pygame.RESIZABLE)
+                return self.selected_window_size, width, height
+                
     def is_mouse_over_rect(self, rect):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         return rect.collidepoint(mouse_x, mouse_y)

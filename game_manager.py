@@ -113,7 +113,7 @@ class GameManager:
         self.barrier.dt = self.dt
         if self.barrier.is_active:
             self.barrier.update(self.ball)
-            
+        
         # Updates the display
         pygame.display.flip()
 
@@ -150,6 +150,7 @@ class GameManager:
                 elif selected_option == "Quit":
                     pygame.quit()
                     return
+                
             else:
                 self.update()
                 self.render()
