@@ -23,7 +23,7 @@ class GameManager:
         y = (screen_height - height) // 2
 
         pygame.display.set_caption("A Box Game...")
-        self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((width, height))
         self.screen_rect = self.screen.get_rect()
         self.screencopy = None
         self.screen_rect.topleft = (x, y)
@@ -134,6 +134,8 @@ class GameManager:
         
         # Update the ball
         self.ball.move(self.dt, self.screen)
+        # Draw the HP bar for the ball
+        self.ball.draw_hp_bar(self.screen)
 
         # Checks for collision between the player and food
         eaten_food = CollisionManager.check_collision(
@@ -165,7 +167,7 @@ class GameManager:
             distance = math.sqrt((projectile.x - self.ball.x) ** 2 + (projectile.y - self.ball.y) ** 2)
             if distance <= self.ball.radius:
                 # Handle projectile-ball collision (you can modify this logic)
-                self.ball.reset_ball(self.screen)
+                self.ball.take_damage(25)
                 self.player.projectiles.remove(projectile)
                 break
             

@@ -9,13 +9,17 @@ class Ball:
         self.color = (255, 0, 0)  # Red
         self.player = player
         self.on_game_over = on_game_over
+        self.max_hp = 100
+        self.hp = self.max_hp
 
     def reset_ball(self, screen):
+        self.screen = screen
         self.x = random.randint(self.radius * 2, screen.get_width() - self.radius * 2)
         self.y = random.randint(self.radius * 2, screen.get_height() - self.radius * 2)
         self.speed = 200  # Adjust the speed as needed
         self.direction = random.uniform(0, 2 * math.pi)  # Random initial direction
         self.last_collision_time = 0
+        self.hp = self.max_hp
         
         if time.time() - self.last_collision_time < 0.15:
             # Player has invulnerability for 0.2 seconds
@@ -45,3 +49,20 @@ class Ball:
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        
+    def take_damage(self, damage):
+        self.hp -= damage
+        if self.hp <= 0:
+            self.reset_ball(self.screen)
+        
+    def draw_hp_bar(self, screen):
+        hp_bar_width = 50
+        hp_bar_height = 10
+        hp_ratio = self.hp / self.max_hp
+        hp_bar_length = int(hp_ratio * hp_bar_width)
+
+        # Draw the background of the HP bar
+        pygame.draw.rect(screen, (255, 255, 255), (self.x - hp_bar_width / 2, self.y - self.radius - 20, hp_bar_width, hp_bar_height))
+
+        # Draw the filled part of the HP bar based on the hit points
+        pygame.draw.rect(screen, (0, 255, 0), (self.x - hp_bar_width / 2, self.y - self.radius - 20, hp_bar_length, hp_bar_height))
