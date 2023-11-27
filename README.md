@@ -1,7 +1,5 @@
 Box Game
 
-A random project I came up with that mimicks a bit of snake mechanics, but with a twist.
-
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
@@ -12,13 +10,16 @@ A random project I came up with that mimicks a bit of snake mechanics, but with 
 - [License](#license)
 
 ## Introduction
-Missing for now.
+A random project I came up with and that I am trying to make better.
 
 ## Features
 - Player wrapping.
+- Attack Mechanics
 - A barrier which deflects the ball.
-- A bouncing ball that tries to kill you.
+- Gets progressively more difficult.
 - A score mechanic.
+- Boss fight
+- Roguelike upgrades
 
 ## Getting Started
 
@@ -26,13 +27,14 @@ Missing for now.
 
 ### Prerequisites
 - Python (version 3.10)
-- Pygame library (install with `pip install pygame`)
+- Pygame library (install with `pip install pygame` in the terminal or powershell)
 
 ### Installation
 
 Provide step-by-step instructions on how users can install any necessary dependencies. For example:
 1. Check if you meet or can fill the prerquisites.
 2. Clone this repository to your local machine.
+3. Extract the file
 
 ### Running the Game
 1. Navigate to the project directory.
