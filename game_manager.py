@@ -58,6 +58,8 @@ class GameManager:
         
         # Creates the ball instance
         self.ball = Ball(self.player, self.handle_game_over)
+        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.ball)
         
         # Create the barrier instance
         self.barrier = Barrier(width, height, self.player)
@@ -86,7 +88,7 @@ class GameManager:
         text = game_over_font.render("Game Over", True, (255, 0, 0))
         text_rect = text.get_rect(center=(self.screen.get_width() / 2, self.screen.get_height() / 2))
         text2 = instruction_font.render("Press Escape to return", True, (255, 0, 0))
-        text_rect2 = text.get_rect(center=(self.screen.get_width() / 2.2, self.screen.get_height() / 1.5))
+        text_rect2 = text.get_rect(center=(self.screen.get_width() / 2.1, self.screen.get_height() / 1.5))
 
         while self.is_game_over:
             for event in pygame.event.get():
@@ -163,13 +165,13 @@ class GameManager:
             projectile.move(self.dt)
 
         # Check for collision between projectiles and the ball
-        for projectile in self.player.projectiles:
-            distance = math.sqrt((projectile.x - self.ball.x) ** 2 + (projectile.y - self.ball.y) ** 2)
-            if distance <= self.ball.radius:
-                # Handle projectile-ball collision (you can modify this logic)
-                self.ball.take_damage(25)
-                self.player.projectiles.remove(projectile)
-                break
+        # Check for collision between projectiles and the ball
+        projectile_hit_list = pygame.sprite.spritecollide(self.ball, self.player.projectiles, True)
+        for projectile in projectile_hit_list:
+            # Handle projectile-ball collision (you can modify this logic)
+            self.ball.take_damage(25)
+            self.player.projectiles.remove(projectile)
+            break
             
         # Updates the barrier
         self.barrier.dt = self.dt

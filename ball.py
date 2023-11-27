@@ -3,14 +3,18 @@ import random
 import time
 import math
 
-class Ball:
+class Ball(pygame.sprite.Sprite):
     def __init__(self, player, on_game_over):
+        super().__init__()
         self.radius = 15
         self.color = (255, 0, 0)  # Red
         self.player = player
+        self.x = player.rect.centerx
+        self.y = player.rect.centery
         self.on_game_over = on_game_over
         self.max_hp = 100
         self.hp = self.max_hp
+        self.rect = pygame.Rect(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)
 
     def reset_ball(self, screen):
         self.screen = screen
@@ -29,6 +33,7 @@ class Ball:
         # Update ball position based on direction and speed
         self.x += self.speed * dt * math.cos(self.direction)
         self.y += self.speed * dt * math.sin(self.direction)
+        self.rect.center = (self.x, self.y)
 
         # Bounce back when the ball hits the screen edges
         if self.x - self.radius < 0 or self.x + self.radius > screen.get_width():
@@ -48,7 +53,7 @@ class Ball:
         self.speed += 1  # You can adjust the speed increment as needed
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
         
     def take_damage(self, damage):
         self.hp -= damage
@@ -56,13 +61,6 @@ class Ball:
             self.reset_ball(self.screen)
         
     def draw_hp_bar(self, screen):
-        hp_bar_width = 50
-        hp_bar_height = 10
-        hp_ratio = self.hp / self.max_hp
-        hp_bar_length = int(hp_ratio * hp_bar_width)
-
-        # Draw the background of the HP bar
-        pygame.draw.rect(screen, (255, 255, 255), (self.x - hp_bar_width / 2, self.y - self.radius - 20, hp_bar_width, hp_bar_height))
-
-        # Draw the filled part of the HP bar based on the hit points
-        pygame.draw.rect(screen, (0, 255, 0), (self.x - hp_bar_width / 2, self.y - self.radius - 20, hp_bar_length, hp_bar_height))
+        hp_bar_width = int(self.rect.width * (self.hp / self.max_hp))
+        hp_bar_rect = pygame.Rect(self.rect.left, self.rect.top - 10, hp_bar_width, 5)
+        pygame.draw.rect(screen, (0, 255, 0), hp_bar_rect)

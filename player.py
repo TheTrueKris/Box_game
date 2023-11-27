@@ -2,12 +2,13 @@ import pygame
 import math
 from projectile import Projectile
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height):
+        super().__init__()
         self.rect = pygame.Rect(screen_width / 2 - 20, screen_height / 2 - 20, 40, 40)
         self.speed = 300
         self.direction = (0, 0)
-        self.projectiles = []
+        self.projectiles = pygame.sprite.Group()
 
     def move(self, keys, dt):
         # Check for arrow key presses and update direction
@@ -60,7 +61,7 @@ class Player:
     def reset_player(self, screen_width, screen_height):
         self.rect = pygame.Rect(screen_width / 2 - 20, screen_height / 2 - 20, 40, 40)
         self.direction = (0, 0)  # Reset direction
-        self.projectiles = []
+        self.projectiles = pygame.sprite.Group()
         
     def attack(self, mouse_pos):
         # Calculate the position of the projectile based on the player's position
@@ -80,4 +81,4 @@ class Player:
 
         # Create a projectile with the calculated angle and position
         projectile = Projectile(projectile_x, projectile_y, angle)
-        self.projectiles.append(projectile)
+        self.projectiles.add(projectile)
