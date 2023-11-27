@@ -7,15 +7,21 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self, player, on_game_over):
         super().__init__()
         self.radius = 15
-        self.color = (255, 0, 0)  # Red
         self.player = player
         self.x = player.rect.centerx
         self.y = player.rect.centery
         self.on_game_over = on_game_over
         self.max_hp = 100
         self.hp = self.max_hp
-        self.rect = pygame.Rect(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)
+        self.load_image("assets/Ball.png")
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
+
+    def load_image(self, path):
+        self.image = pygame.image.load(path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.radius * 2, self.radius * 2))
+    
+    
     def reset_ball(self, screen):
         self.screen = screen
         self.x = random.randint(self.radius * 2, screen.get_width() - self.radius * 2)
@@ -26,8 +32,9 @@ class Ball(pygame.sprite.Sprite):
         self.hp = self.max_hp
         
         if time.time() - self.last_collision_time < 0.15:
-            # Player has invulnerability for 0.2 seconds
+            # Player has invulnerability for 0.15 seconds
             return
+
 
     def move(self, dt, screen):
         # Update ball position based on direction and speed
@@ -53,7 +60,7 @@ class Ball(pygame.sprite.Sprite):
         self.speed += 1  # You can adjust the speed increment as needed
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        screen.blit(self.image, self.rect.topleft)
         
     def take_damage(self, damage):
         self.hp -= damage

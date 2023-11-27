@@ -8,7 +8,6 @@ class Projectile(pygame.sprite.Sprite):
         self.length = 30
         self.x = x
         self.y = y
-        self.color = (0, 255, 0)  # Green
         self.speed = 500  # Adjust the speed as needed
         self.direction = direction
         self.projectile_image = pygame.image.load("assets/Projectile.png").convert_alpha()
