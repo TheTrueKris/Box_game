@@ -1,8 +1,9 @@
 import pygame
 import math
 
-class Barrier:
+class Barrier(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, player):
+        super().__init__()
         self.width = 10
         self.length = 60
         self.player = player
@@ -12,6 +13,9 @@ class Barrier:
         self.is_active = False
         self.barrier_image = pygame.image.load("assets/Barrier.png").convert_alpha()
         self.barrier_image = pygame.transform.scale(self.barrier_image, (self.width, self.length))
+        
+        # Create a rect to represent the position and dimensions of the sprite
+        self.rect = self.barrier_image.get_rect()
 
     def update(self, ball):
         # Calculate the position of the barrier based on the player's position

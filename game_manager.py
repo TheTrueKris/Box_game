@@ -63,6 +63,7 @@ class GameManager:
         
         # Create the barrier instance
         self.barrier = Barrier(width, height, self.player)
+        self.all_sprites.add(self.ball)
         
         # Starts the game
         self.handle_game_over()
