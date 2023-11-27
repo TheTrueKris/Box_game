@@ -30,6 +30,7 @@ class GameManager:
         self.dt = 0
         self.FPS = 60
         self.food_count = 0
+        self.is_game_over = False
         
         # Create an instance of SoundManager
         self.sound_manager = SoundManager()
@@ -63,13 +64,45 @@ class GameManager:
         self.handle_game_over()
         
     def handle_game_over(self):
-        # Restart the game
-        self.player.reset_player(self.screen.get_width(), self.screen.get_height())
-        self.ball.reset_ball(self.screen)
-        self.score_manager.reset_score()
-        self.food_count = 0
-        self.food_manager.reset_food()
-        self.food_manager.spawn_food(self.screen, eaten_food = [])
+        if self.is_game_over == False:
+            # Restart the game
+            self.player.reset_player(self.screen.get_width(), self.screen.get_height())
+            self.ball.reset_ball(self.screen)
+            self.score_manager.reset_score()
+            self.food_count = 0
+            self.food_manager.reset_food()
+            self.food_manager.spawn_food(self.screen, eaten_food = [])
+            
+        else:
+            # Show game over screen
+            self.game_over()
+        
+        
+    def game_over(self):
+        game_over_font = pygame.font.Font(None, 74)
+        instruction_font = pygame.font.Font(None, 50)
+        text = game_over_font.render("Game Over", True, (255, 0, 0))
+        text_rect = text.get_rect(center=(self.screen.get_width() / 2, self.screen.get_height() / 2))
+        text2 = instruction_font.render("Press Escape to return", True, (255, 0, 0))
+        text_rect2 = text.get_rect(center=(self.screen.get_width() / 2.2, self.screen.get_height() / 1.5))
+
+        while self.is_game_over:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    pygame.quit()
+                    return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.is_game_over = False
+                        self.handle_game_over()
+                        return
+            
+            self.screen.blit(text, text_rect)
+            self.screen.blit(text2, text_rect2)
+
+            pygame.display.flip()
+            self.clock.tick(self.FPS)
         
 
     def handle_events(self):
@@ -118,6 +151,7 @@ class GameManager:
         if CollisionManager.is_collision(
             self.player.get_temp_rect(), self.ball.x, self.ball.y, self.ball.radius
         ):
+            self.is_game_over = True
             self.handle_game_over()
             
         # Updates the barrier
