@@ -1,10 +1,13 @@
 import pygame
+import math
+from projectile import Projectile
 
 class Player:
     def __init__(self, screen_width, screen_height):
         self.rect = pygame.Rect(screen_width / 2 - 20, screen_height / 2 - 20, 40, 40)
         self.speed = 300
         self.direction = (0, 0)
+        self.projectiles = []
 
     def move(self, keys, dt):
         # Check for arrow key presses and update direction
@@ -57,3 +60,24 @@ class Player:
     def reset_player(self, screen_width, screen_height):
         self.rect = pygame.Rect(screen_width / 2 - 20, screen_height / 2 - 20, 40, 40)
         self.direction = (0, 0)  # Reset direction
+        self.projectiles = []
+        
+    def attack(self, mouse_pos):
+        # Calculate the position of the projectile based on the player's position
+        player_center = (
+            self.rect.centerx,
+            self.rect.centery,
+        )
+        # Calculate the angle from player to mouse position
+        angle = math.atan2(
+            mouse_pos[1] - player_center[1],
+            mouse_pos[0] - player_center[0],
+        )
+
+        # Calculate the initial position of the projectile based on player's center
+        projectile_x = self.rect.centerx
+        projectile_y = self.rect.centery
+
+        # Create a projectile with the calculated angle and position
+        projectile = Projectile(projectile_x, projectile_y, angle)
+        self.projectiles.append(projectile)

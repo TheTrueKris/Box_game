@@ -1,4 +1,5 @@
 import pygame
+import math
 from food import Foods
 from collision import CollisionManager
 from player import Player
@@ -7,6 +8,7 @@ from sound_manager import SoundManager
 from score import ScoreManager
 from ball import Ball
 from barrier import Barrier
+from projectile import Projectile
 
 class GameManager:
     def __init__(self, width, height):
@@ -111,15 +113,15 @@ class GameManager:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.in_main_menu = not self.in_main_menu
-                if event.key == pygame.K_SPACE:
-                    # Restarts the game
-                    self.handle_game_over()   
+                    self.in_main_menu = not self.in_main_menu 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.player.attack(mouse_pos)
+                if event.button == 3:  # Right mouse button
                     self.barrier.activate()
             elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:  # Left mouse button
+                if event.button == 3:  # Right mouse button
                     self.barrier.deactivate()
                 
                     
@@ -153,6 +155,19 @@ class GameManager:
         ):
             self.is_game_over = True
             self.handle_game_over()
+        
+        # Update projectiles
+        for projectile in self.player.projectiles:
+            projectile.move(self.dt)
+
+        # Check for collision between projectiles and the ball
+        for projectile in self.player.projectiles:
+            distance = math.sqrt((projectile.x - self.ball.x) ** 2 + (projectile.y - self.ball.y) ** 2)
+            if distance <= self.ball.radius:
+                # Handle projectile-ball collision (you can modify this logic)
+                self.ball.reset_ball(self.screen)
+                self.player.projectiles.remove(projectile)
+                break
             
         # Updates the barrier
         self.barrier.dt = self.dt
@@ -173,6 +188,10 @@ class GameManager:
         
         # Draw the ball
         self.ball.draw(self.screen)
+        
+        # Draw the projectiles
+        for projectile in self.player.projectiles:
+            projectile.draw(self.screen)
         
         # Draw the barrier
         self.barrier.draw(self.screen)
