@@ -11,7 +11,7 @@ class Projectile(pygame.sprite.Sprite):
         self.color = (0, 255, 0)  # Green
         self.speed = 500  # Adjust the speed as needed
         self.direction = direction
-        self.projectile_image = pygame.image.load("assets/Projectile.png")
+        self.projectile_image = pygame.image.load("assets/Projectile.png").convert_alpha()
         self.projectile_image = pygame.transform.scale(self.projectile_image, (self.width, self.length))
         # Update the rotation angle based on the mouse position
         self.rotation_angle = math.degrees(self.direction)

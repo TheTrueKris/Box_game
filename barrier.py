@@ -10,7 +10,7 @@ class Barrier:
         self.screen_height = screen_height
         self.distance_from_player = 75  # Adjust the distance as needed
         self.is_active = False
-        self.barrier_image = pygame.image.load("assets/Barrier.png")
+        self.barrier_image = pygame.image.load("assets/Barrier.png").convert_alpha()
         self.barrier_image = pygame.transform.scale(self.barrier_image, (self.width, self.length))
 
     def update(self, ball):
