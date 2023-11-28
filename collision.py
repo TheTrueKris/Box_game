@@ -26,7 +26,7 @@ class CollisionManager:
         return eaten_food
     
     @staticmethod
-    def is_collision(player_rect, x, y, radius):
+    def is_collision(player_rect, ball):
         # Check for collision with the player's rect
         player_circle = pygame.draw.circle(
             pygame.Surface((player_rect.width, player_rect.height)),
@@ -37,4 +37,4 @@ class CollisionManager:
         player_circle.x = player_rect.x
         player_circle.y = player_rect.y
 
-        return player_circle.colliderect(x - radius, y - radius, radius * 2, radius * 2)
+        return player_circle.colliderect(ball.rect)

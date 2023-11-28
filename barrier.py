@@ -4,7 +4,7 @@ import math
 class Barrier(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, player):
         super().__init__()
-        self.width = 10
+        self.width = 20
         self.length = 60
         self.player = player
         self.screen_width = screen_width

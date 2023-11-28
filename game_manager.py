@@ -8,7 +8,6 @@ from sound_manager import SoundManager
 from score import ScoreManager
 from ball import Ball
 from barrier import Barrier
-from projectile import Projectile
 
 class GameManager:
     def __init__(self, width, height):
@@ -34,6 +33,9 @@ class GameManager:
         self.food_count = 0
         self.is_game_over = False
         
+        self.ball_spawn_timer = 0
+        self.ball_spawn_threshold = 5  # Time threshold for ball spawns in seconds
+        
         # Create an instance of SoundManager
         self.sound_manager = SoundManager()
 
@@ -58,18 +60,19 @@ class GameManager:
         
         # Creates the ball instance
         self.ball = Ball(self.player, self.handle_game_over)
-        self.all_sprites = pygame.sprite.Group()
-        self.all_sprites.add(self.ball)
+        self.balls = []
         
         # Create the barrier instance
         self.barrier = Barrier(width, height, self.player)
-        self.all_sprites.add(self.ball)
         
         # Starts the game
         self.handle_game_over()
         
     def handle_game_over(self):
         if self.is_game_over == False:
+            # Clear existing balls
+            self.balls = [self.ball]
+            
             # Restart the game
             self.player.reset_player(self.screen.get_width(), self.screen.get_height())
             self.ball.reset_ball(self.screen)
@@ -77,11 +80,24 @@ class GameManager:
             self.food_count = 0
             self.food_manager.reset_food()
             self.food_manager.spawn_food(self.screen, eaten_food = [])
+            self.ball_spawn_timer = 0 
             
         else:
             # Show game over screen
             self.game_over()
-        
+            
+    def spawn_new_ball(self):
+        # Remove dead balls from the list
+        self.balls = [ball for ball in self.balls if ball.is_alive]
+
+        new_ball = Ball(self.player, self.handle_game_over)
+        # Check if the new ball overlaps with the player
+        while pygame.sprite.spritecollide(new_ball, pygame.sprite.Group(self.player), False):
+            new_ball.reset_ball(self.screen)  # Reposition the ball
+
+        self.balls.append(new_ball)
+        self.ball_spawn_timer = 0  # Reset the ball spawn timer
+
         
     def game_over(self):
         game_over_font = pygame.font.Font(None, 74)
@@ -100,6 +116,9 @@ class GameManager:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.is_game_over = False
+                        for ball in self.balls:
+                            ball.reset_ball(self.screen)  # Reset the ball after game over
+
                         self.handle_game_over()
                         return
             
@@ -135,10 +154,19 @@ class GameManager:
         self.player.move(keys, self.dt)
         self.player.wrap_around(self.screen)
         
+        # Update the ball spawn timer
+        self.ball_spawn_timer += self.dt
+        
+        # Check if it's time to spawn a new ball
+        if self.ball_spawn_timer >= self.ball_spawn_threshold:
+            self.spawn_new_ball()  # Spawn a new ball
+        
         # Update the ball
-        self.ball.move(self.dt, self.screen)
-        # Draw the HP bar for the ball
-        self.ball.draw_hp_bar(self.screen)
+        self.balls = [ball for ball in self.balls if ball.is_alive]  # Remove dead balls
+        for ball in self.balls:
+            ball.move(self.dt, self.screen)
+            # Draw the HP bar for the ball
+            ball.draw_hp_bar(self.screen)
 
         # Checks for collision between the player and food
         eaten_food = CollisionManager.check_collision(
@@ -154,10 +182,9 @@ class GameManager:
             self.food_count += 1
             self.score_manager.increase_score(self.food_count)
             
-        # Check for collision between the player and the ball
-        if CollisionManager.is_collision(
-            self.player.get_temp_rect(), self.ball.x, self.ball.y, self.ball.radius
-        ):
+        # Check for collision between the player and the balls
+        ball_group = pygame.sprite.Group(self.balls)
+        if pygame.sprite.spritecollide(self.player, ball_group, True):
             self.is_game_over = True
             self.handle_game_over()
         
@@ -166,18 +193,19 @@ class GameManager:
             projectile.move(self.dt)
 
         # Check for collision between projectiles and the ball
-        # Check for collision between projectiles and the ball
-        projectile_hit_list = pygame.sprite.spritecollide(self.ball, self.player.projectiles, True)
-        for projectile in projectile_hit_list:
-            # Handle projectile-ball collision (you can modify this logic)
-            self.ball.take_damage(25)
-            self.player.projectiles.remove(projectile)
-            break
+        for ball in ball_group:
+            projectile_hit_list = pygame.sprite.spritecollide(ball, self.player.projectiles, True)
+            for projectile in projectile_hit_list:
+                # Handle projectile-ball collision (you can modify this logic)
+                ball.take_damage(25)
+                self.player.projectiles.remove(projectile)
+                break
             
         # Updates the barrier
         self.barrier.dt = self.dt
         if self.barrier.is_active:
-            self.barrier.update(self.ball)
+            for ball in self.balls:
+                self.barrier.update(ball)
         
         # Updates the display
         pygame.display.flip()
@@ -192,7 +220,8 @@ class GameManager:
         self.player.draw(self.screen)
         
         # Draw the ball
-        self.ball.draw(self.screen)
+        for ball in self.balls:
+            ball.draw(self.screen)
         
         # Draw the projectiles
         for projectile in self.player.projectiles:
