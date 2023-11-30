@@ -36,6 +36,11 @@ class GameManager:
         self.ball_spawn_timer = 0
         self.ball_spawn_threshold = 5  # Time threshold for ball spawns in seconds
         
+        # Load the in-game background image
+        self.background = pygame.image.load("assets/ingame_background.png").convert_alpha()
+        self.background = pygame.transform.scale(self.background, (width, height))
+
+        
         # Create an instance of SoundManager
         self.sound_manager = SoundManager()
 
@@ -48,9 +53,9 @@ class GameManager:
         self.in_main_menu = True
 
         # Initializes the food manager and sets the amount of food to 5
-        self.food_manager = Foods(food_amount=5)
+        self.food_manager = Foods(initial_food_amount = 1)
         # Spawns food
-        self.food_manager.spawn_food(self.screen, eaten_food = [])
+        self.food_manager.spawn_food(self.screen, self.dt, eaten_food=[])
 
         # Creates the player instance
         self.player = Player(width, height)
@@ -63,7 +68,7 @@ class GameManager:
         self.balls = []
         
         # Create the barrier instance
-        self.barrier = Barrier(width, height, self.player)
+        self.barrier = Barrier(self.player)
         
         # Starts the game
         self.handle_game_over()
@@ -79,7 +84,7 @@ class GameManager:
             self.score_manager.reset_score()
             self.food_count = 0
             self.food_manager.reset_food()
-            self.food_manager.spawn_food(self.screen, eaten_food = [])
+            self.food_manager.spawn_food(self.screen, self.dt, eaten_food = [])
             self.ball_spawn_timer = 0 
             
         else:
@@ -170,17 +175,17 @@ class GameManager:
 
         # Checks for collision between the player and food
         eaten_food = CollisionManager.check_collision(
-            self.player.get_temp_rect(), self.food_manager.foods_list,
+            self.player.get_temp_rect(), self.food_manager.sprites(),
             self.screen.get_width(), self.screen.get_height()
         )
         if eaten_food:
             self.sound_manager.stop_sound_effect("eat_sound")
             self.sound_manager.play_sound_effect("eat_sound")
-            # Respawn only the missing food
-            self.food_manager.spawn_food(self.screen, eaten_food)
             # Increment food count and update the score
             self.food_count += 1
             self.score_manager.increase_score(self.food_count)
+            
+        self.food_manager.spawn_food(self.screen, self.dt, eaten_food)
             
         # Check for collision between the player and the balls
         ball_group = pygame.sprite.Group(self.balls)
@@ -211,7 +216,8 @@ class GameManager:
         pygame.display.flip()
 
     def render(self):
-        self.screen.fill("black")
+        # Draw the in-game background
+        self.screen.blit(self.background, (0, 0))
         
         # Renders the food
         self.food_manager.render_food(self.screen)

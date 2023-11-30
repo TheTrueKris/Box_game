@@ -1,29 +1,41 @@
 import pygame
 import random
 
-pygame.init()
+class Food(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("assets/food.png").convert_alpha()  # Load image
+        self.rect = self.image.get_rect()
 
-class Foods():
-    def __init__(self, food_amount):
-        self.food_amount = food_amount
-        self.foods_list = []
+class Foods(pygame.sprite.Group):
+    def __init__(self, initial_food_amount):
+        super().__init__()
+        self.initial_food_amount = initial_food_amount
+        self.food_amount = initial_food_amount
+        self.elapsed_time = 0
 
-    def spawn_food(self, screen, eaten_food):
-        for food_rect in eaten_food:
-            self.foods_list.remove(food_rect)
 
-        # Generate and add new food items to reach the desired amount
-        while len(self.foods_list) < self.food_amount:
-            food_x = random.randint(0, screen.get_width())
-            food_y = random.randint(0, screen.get_height())
-            food_rect = pygame.Rect(food_x, food_y, 10, 10)
-            self.foods_list.append(food_rect)
+    def spawn_food(self, screen, dt, eaten_food):
+        for food in eaten_food:
+            self.remove(food)
 
+        # Increase the food amount over time
+        self.elapsed_time += dt
+        if self.elapsed_time >= 5:  # Adjust the time threshold as needed
+            self.food_amount += 1
+            self.elapsed_time = 0
+
+        while len(self.sprites()) < self.food_amount:
+            food = Food()
+            food.rect.x = random.randint(0, screen.get_width())
+            food.rect.y = random.randint(0, screen.get_height())
+            self.add(food)
+            
+            
+    def reset_food(self):
+        self.empty()
+        self.food_amount = self.initial_food_amount
+        self.elapsed_time = 0
 
     def render_food(self, screen):
-        for food_rect in self.foods_list:
-            pygame.draw.rect(screen, "white", food_rect)
-            
-    
-    def reset_food(self):
-        self.foods_list = []
+        self.draw(screen)

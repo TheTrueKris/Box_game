@@ -2,13 +2,11 @@ import pygame
 import math
 
 class Barrier(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, player):
+    def __init__(self, player):
         super().__init__()
         self.width = 20
         self.length = 60
         self.player = player
-        self.screen_width = screen_width
-        self.screen_height = screen_height
         self.distance_from_player = 75  # Adjust the distance as needed
         self.is_active = False
         self.barrier_image = pygame.image.load("assets/Barrier.png").convert_alpha()

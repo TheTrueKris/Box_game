@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 import math
 
 class Ball(pygame.sprite.Sprite):
@@ -61,7 +60,7 @@ class Ball(pygame.sprite.Sprite):
 
         # Increase speed over time
         self.speed += 1  # You can adjust the speed increment as needed
-        self.hp += 0.2 # You can adjust the regen as needed
+        self.hp += 0.1 # You can adjust the regen as needed
         
         # Check if the ball is close to the player
         distance_to_player = math.sqrt(
