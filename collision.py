@@ -1,5 +1,3 @@
-import pygame
-
 class CollisionManager:
     @staticmethod
     def check_collision(player_rect, foods, screen_width, screen_height):

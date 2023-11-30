@@ -1,42 +1,6 @@
 import pygame
 import sys
-
-class WindowPicker:
-    def __init__(self, screen):
-        self.screen = screen
-        self.font = pygame.font.Font(None, 36)
-        self.sizes = [(800, 600), (960, 600), (1280, 720), (1920, 1080)]
-        self.selected_size = None
-
-    def run(self):
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    x, y = event.pos
-                    for idx, size in enumerate(self.sizes):
-                        button_rect = pygame.Rect(50, 50 + idx * 50, 300, 40)
-                        if button_rect.collidepoint(x, y):
-                            self.selected_size = size
-                            return
-
-            self.render()
-
-    def render(self):
-        self.screen.fill((255, 255, 255))
-
-        for idx, size in enumerate(self.sizes):
-            button_rect = pygame.Rect(50, 50 + idx * 50, 300, 40)
-            pygame.draw.rect(self.screen, (200, 200, 200), button_rect)
-            pygame.draw.rect(self.screen, (0, 0, 0), button_rect, 2)
-
-            text = self.font.render(f"{size[0]} x {size[1]}", True, (0, 0, 0))
-            self.screen.blit(text, (button_rect.centerx - text.get_width() // 2, button_rect.centery - text.get_height() // 2))
-
-        pygame.display.flip()
-
+from window_picker import WindowPicker
 
 class MainMenu:
     def __init__(self, screen, sound_manager):
@@ -45,7 +9,6 @@ class MainMenu:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 36)
         self.FPS = 60
-        # Additional attribute to store the selected window size
         self.selected_window_size = (screen.get_width(), screen.get_height())
         self.options_menu = False
         self.window_size_changed = False

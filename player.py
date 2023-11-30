@@ -3,9 +3,9 @@ import math
 from projectile import Projectile
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen):
         super().__init__()
-        self.rect = pygame.Rect(screen_width / 2 - 20, screen_height / 2 - 20, 40, 40)
+        self.rect = pygame.Rect(screen.get_width() / 2 - 20, screen.get_height() / 2 - 20, 40, 40)
         self.speed = 300
         self.direction = (0, 0)
         self.projectiles = pygame.sprite.Group()

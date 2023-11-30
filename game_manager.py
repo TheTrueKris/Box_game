@@ -58,10 +58,10 @@ class GameManager:
         self.food_manager.spawn_food(self.screen, self.dt, eaten_food=[])
 
         # Creates the player instance
-        self.player = Player(width, height)
+        self.player = Player(self.screen)
         
         # Creates an instance of the score
-        self.score_manager = ScoreManager(width, height)
+        self.score_manager = ScoreManager()
         
         # Creates the ball instance
         self.ball = Ball(self.player, self.handle_game_over)
