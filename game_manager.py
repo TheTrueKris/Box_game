@@ -38,7 +38,7 @@ class GameManager:
         
         # Load the in-game background image
         self.background = pygame.image.load("assets/ingame_background.png").convert_alpha()
-        self.background = pygame.transform.scale(self.background, (width, height))
+        self.background = pygame.transform.scale(self.background, (self.screen.get_width(), self.screen.get_height()))
 
         
         # Create an instance of SoundManager
@@ -262,7 +262,8 @@ class GameManager:
                 if self.screencopy != (self.screen.get_width(), self.screen.get_height()):
                     self.screencopy = (self.screen.get_width(), self.screen.get_height())
                     # Restarts the game
-                    self.handle_game_over() 
+                    self.handle_game_over()
+                    self.background = pygame.transform.scale(self.background, (self.screen.get_width(), self.screen.get_height()))
 
                 # Sets tick rate to 60
                 self.dt = self.clock.tick(self.FPS) / 1000

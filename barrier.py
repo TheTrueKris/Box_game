@@ -4,13 +4,13 @@ import math
 class Barrier(pygame.sprite.Sprite):
     def __init__(self, player):
         super().__init__()
-        self.width = 20
-        self.length = 60
+        self.width = 60
+        self.length = 20
         self.player = player
         self.distance_from_player = 75  # Adjust the distance as needed
         self.is_active = False
         self.barrier_image = pygame.image.load("assets/Barrier.png").convert_alpha()
-        self.barrier_image = pygame.transform.scale(self.barrier_image, (self.width, self.length))
+        self.barrier_image = pygame.transform.scale(self.barrier_image, (self.length, self.width))
         
         # Create a rect to represent the position and dimensions of the sprite
         self.rect = self.barrier_image.get_rect()
